@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 
 class CitaController extends Controller
 {
+    /*
+     * Muestra la lista de citas de aspirantes. Permite filtrar el listado por el parámetro 'estatus'.
+        Carga las relaciones de aspirante/usuario y coordinador/usuario para mostrar la información completa.
+    */
     public function index(Request $request)
     {
         $estatus = $request->query('estatus');
@@ -25,14 +29,19 @@ class CitaController extends Controller
         return view('administrador.CRUDCITAS.read', compact('citas','estatus'));
     }
 
+
+    /*
+     * Actualiza el estatus de una cita específica.
+    */
     public function updateStatus(Request $request, Cita $cita)
     {
+        /* Valida que el nuevo estatus sea uno permitido. */
         $data = $request->validate([
             'estatus' => ['required','in:Pendiente,Aprobada,Concluida,Cancelada']
         ]);
 
-        $coordinadorId = Coordinador::where('id_usuario', auth()->id())->value('id_coordinador')
-                         ?? Coordinador::min('id_coordinador');
+        /* Asigna la cita al coordinador autenticado o al coordinador con el ID más bajo si el usuario actual no es coordinador. */
+        $coordinadorId = Coordinador::where('id_usuario', auth()->id())->value('id_coordinador')?? Coordinador::min('id_coordinador');
 
         if (!$coordinadorId) {
             return back()->withErrors(['general' => 'No hay coordinadores disponibles para asignar a la cita.']);

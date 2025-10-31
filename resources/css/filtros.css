@@ -1,0 +1,141 @@
+/*
+ * === ESTILOS MEJORADOS PARA EL PANEL DE FILTROS ===
+ */
+
+/* 1. Contenedor principal del formulario de filtros */
+.filter-form {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 28px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* 2. Estilos para las etiquetas (Labels) */
+.filter-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #475569;
+    letter-spacing: 0.01em;
+}
+
+/* 3. Estilos generales para inputs y selects dentro del filtro */
+.filter-form input[type="text"],
+.filter-form select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: #ffffff;
+    color: #1e293b;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+/* 3.1 Efecto hover en inputs y selects */
+.filter-form input[type="text"]:hover,
+.filter-form select:hover {
+    border-color: #cbd5e1;
+}
+
+/* 3.2 Estilo para placeholders */
+.filter-form input[type="text"]::placeholder {
+    color: #94a3b8;
+}
+
+/* 4. Efecto de Foco (cuando se hace clic) */
+.filter-form input[type="text"]:focus,
+.filter-form select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12), 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* 5. Espaciado del grid */
+.filter-form .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* 6. Contenedor de los botones */
+.filter-actions {
+    margin-top: 20px;
+    padding-top: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* 6.1 Estilo base para botones */
+.filter-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+/* 6.2 Botón principal (Filtrar) */
+.filter-actions .btn:not(.btn-ghost) {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+.filter-actions .btn:not(.btn-ghost):hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    transform: translateY(-1px);
+}
+
+/* 6.3 Botón secundario (Limpiar) */
+.filter-actions .btn.btn-ghost {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 2px solid #e2e8f0;
+}
+
+.filter-actions .btn.btn-ghost:hover {
+    background-color: #e2e8f0;
+    border-color: #cbd5e1;
+}
+
+/* 7. Responsivo: En pantallas medianas */
+@media (max-width: 1024px) {
+    .filter-form .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 8. Responsivo: En pantallas pequeñas, apila los filtros */
+@media (max-width: 768px) {
+    .filter-form {
+        padding: 20px;
+    }
+    
+    .filter-form .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .filter-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .filter-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

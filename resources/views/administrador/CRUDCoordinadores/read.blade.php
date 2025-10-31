@@ -1,6 +1,5 @@
 @extends('layouts.encabezados')
-
-@section('title', 'Gestión Coordinadores')
+@section('title', 'Gestión coordinadores')
 
 @section('content')
   <div class="crud-wrap">
@@ -16,6 +15,8 @@
       </div>
       
       <div class="crud-body">
+        <h1>Coordinadores</h1>
+
         @if (session('success'))
         
         <div class="gm-ok">{{ session('success') }}</div>
@@ -32,7 +33,6 @@
           <table class="gm-table">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Nombre</th>
                 <th>Usuario</th>
                 <th>Correo</th>
@@ -46,7 +46,6 @@
             <tbody>
               @foreach ($coordinadores as $c)
               <tr>
-                <td>{{ $c->id_coordinador }}</td>
                 <td>
                   {{ optional($c->usuario)->nombre }}
                   {{ optional($c->usuario)->apellidoP }}
@@ -60,7 +59,7 @@
                   <td>{{ $c->estatus }}</td>
                   <td>
                     <div class="table-actions">
-                      <a href="{{ route('coordinadores.edit', $c) }}" class="btn-ghost">Actualizar</a>
+                      <a href="{{ route('coordinadores.edit', $c) }}" class="btn btn-ghost">Actualizar</a>
                         <form action="{{ route('coordinadores.destroy', ['coordinador' => $c->id_coordinador]) }}" method="POST">
                           @csrf
                           @method('DELETE')

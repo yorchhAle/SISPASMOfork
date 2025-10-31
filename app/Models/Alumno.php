@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\User;
+
 
 class Alumno extends Authenticatable implements CanResetPassword
 {
@@ -27,6 +29,12 @@ class Alumno extends Authenticatable implements CanResetPassword
         return $this->belongsTo(Diplomado::class, 'id_diplomado', 'id_diplomado');
     }
 
+    public function calificaciones()
+    {
+        return $this->hasMany(Calificacion::class, 'id_alumno', 'id_alumno');
+    }
+    // --- FIN DE LA SOLUCIÓN ---
+
     public function fichaMedica()
     {
         return $this->hasOne(FichaMedica::class, 'id_alumno', 'id_alumno');
@@ -40,5 +48,15 @@ class Alumno extends Authenticatable implements CanResetPassword
     public function getEmailForPasswordReset()
     {
         return $this->usuario?->correo;
+    }
+
+    public function extracurriculares()
+    {
+        return $this->belongsToMany(
+            Taller::class,
+            'inscripcion_extracurricular', // Nombre de la tabla pivote
+            'id_alumno',                  // Llave foránea de este modelo en la tabla pivote
+            'id_extracurricular'          // Llave foránea del otro modelo en la tabla pivote
+        );
     }
 }

@@ -9,8 +9,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
-class AdminController extends Controller{
+class AdminController extends Controller
+{
 
+    /*
+     * Constructor del controlador. Aplica un middleware que verifica que el usuario autenticado
+     * tenga el rol de 'Administrador' para permitir el acceso a todas sus acciones.
+    */
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -21,21 +26,41 @@ class AdminController extends Controller{
         });
     }
 
+
+    /*
+     * Muestra una lista paginada de todos los Administradores. Incluye la información del usuario asociado y los 
+     * ordena de forma descendente por ID.
+    */
     public function index(){
         $admin=Administrador::with('usuario')->orderByDesc('id_admin')->paginate(15);
         return view('CRUDAdmin.read', compact('admin'));
     }
     
+
+    /*
+     * Muestra la vista del formulario para crear un nuevo Administrador.
+    */
     public function create(){
         return view('CRUDAdmin.create');
     }
 
+
+    /*
+     * Muestra la vista del formulario para editar un Administrador existente. Carga la relación 'usuario' del 
+     * modelo Administrador para mostrar todos los datos. Muestra la vista del formulario para editar un Administrador 
+     * existente. Carga la relación 'usuario' del modelo Administrador para mostrar todos los datos.
+    */
     public function edit(Administrador $admin){
         $admin->load('usuario');
         return view('CRUDAdmin.update', compact('admin'));
     }
 
+
+    /*
+     * Almacena un nuevo Administrador y su Usuario asociado en la base de datos.
+    */
     public function store(Request $request){
+        /* Valida todos los campos, incluyendo la unicidad del usuario y correo. */
         $data=$request->validate([
             'nombre'       => ['required', 'string', 'max:100'],
             'apellidoP'    => ['required', 'string', 'max:100'],
@@ -51,6 +76,8 @@ class AdminController extends Controller{
             'rol'=>['required', 'string', 'max:50'],
             'estatus'      => ['required', Rule::in(['activo','inactivo'])],
         ]);
+
+        /* Ejecuta una transacción para garantizar la creación simultánea del registro en 'usuarios' y 'administradores'. */
         DB::transaction(function() use ($data){
             $user=User::create([
                 'nombre'      => $data['nombre'],
@@ -75,7 +102,12 @@ class AdminController extends Controller{
         return redirect()->route('admin.index')->with('success','Administrador creado exitosamente.');
     }
 
+
+    /*
+     * Actualiza la información de un Administrador y su Usuario asociado.
+    */
     public function update(){
+        /* Valida los campos, incluyendo la regla de unicidad para 'usuario' y 'correo', ignorando el registro actual. */
         $data=request()->validate([
             'nombre'       => ['required', 'string', 'max:100'],
             'apellidoP'    => ['required', 'string', 'max:100'],
@@ -91,6 +123,8 @@ class AdminController extends Controller{
             'rol'=>['required', 'string', 'max:50'],
             'estatus'      => ['required', Rule::in(['activo','inactivo'])],
         ]);
+
+        /* Ejecuta una transacción para actualizar los datos tanto en la tabla 'usuarios' como en 'administradores'. */
         DB::transaction(function() use ($data){
             $user=User::where('id_usuario', request('id_usuario'))->first();
             $user->nombre      = $data['nombre'];
@@ -98,6 +132,7 @@ class AdminController extends Controller{
             $user->apellidoM   = $data['apellidoM'];
             $user->fecha_nac   = $data['fecha_nac'];
             $user->usuario     = $data['usuario'];
+            /* Actualiza la contraseña solo si se proporciona un nuevo valor. */
             if(!empty($data['pass'])){
                 $user->pass    = Hash::make($data['pass']);
             }
@@ -114,6 +149,10 @@ class AdminController extends Controller{
         return redirect()->route('admin.index')->with('ok','Administrador actualizado exitosamente.');
     }
 
+    /*
+     * Elimina un registro de Administrador y su Usuario asociado. Ejecuta una transacción para asegurar que ambos 
+     * registros (Administrador y Usuario) sean eliminados de forma conjunta, manteniendo la integridad de los datos.
+    */
     public function destroy(Administrador $admin)
     {
         DB::transaction(function () use ($admin) {
@@ -124,9 +163,6 @@ class AdminController extends Controller{
                 $usuario->delete();
             }
         });
-
         return redirect()->route('admin.index')->with('ok', 'Coordinador eliminado.');
     }
-
-
 }

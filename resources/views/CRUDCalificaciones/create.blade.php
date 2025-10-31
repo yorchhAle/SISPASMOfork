@@ -1,12 +1,11 @@
 @extends('layouts.encabezadosDoc')
-
-@section('title', 'Gestión Calificaciones')
+@section('title', 'Gestión calificaciones')
 
 @section('content')
     <div class="crud-wrap">
         <section class="crud-card">
             <header class="crud-hero">
-                <h2 class="crud-hero-title">Gestión de Calificaciones</h2>
+                <h2 class="crud-hero-title">Gestión de calificaciones</h2>
                 <p class="crud-hero-subtitle">Captura</p>
 
                 <nav class="crud-tabs">
@@ -18,10 +17,12 @@
             <div class="crud-body">
                 <h1>Nueva calificación</h1>
 
+                {{-- Bloque de mensajes, muestra mensajes de éxito (`ok`) de la sesión. --}}
                 @if (session('ok'))
                     <div class="gm-ok">{{ session('ok') }}</div>
                 @endif
 
+                {{-- Bloque de errores, muestra los errores de validación de laravel (si los hay). --}}
                 @if ($errors->any())
                     <ul class="gm-errors">
                         @foreach ($errors->all() as $e)
@@ -30,46 +31,37 @@
                     </ul>
                 @endif
 
+                {{-- Formulario principal, envía los datos de la calificación al controlador (método post). --}}
                 <form class="gm-form" method="POST" action="{{ route('calif.store') }}">
                     @csrf
 
-                    {{-- =========================
-                         Datos de la calificación
-                    ========================== --}}
                     <h3>Datos</h3>
-
+                    {{-- Bloque de selección de módulo y alumno. --}}
                     <div class="grid-2">
                         <div>
-                            <label for="id_alumno">Alumno</label>
-                            <select id="id_alumno" name="id_alumno" required>
-                                <option value="">-- Selecciona un alumno --</option>
-                                @foreach($alumnos as $a)
-                                    @php
-                                        $nombre = optional($a->usuario)->nombre.' '.optional($a->usuario)->apellidoP.' '.optional($a->usuario)->apellidoM;
-                                        $nombre = trim($nombre) ?: ('Alumno #'.$a->id_alumno);
-                                    @endphp
-                                    <option value="{{ $a->id_alumno }}" {{ old('id_alumno')==$a->id_alumno?'selected':'' }}>
-                                        {{ $nombre }} — Grupo: {{ $a->grupo }} — Diplomado: {{ $a->num_diplomado }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('id_alumno') <small class="gm-error">{{ $message }}</small> @enderror
-                        </div>
-
-                        <div>
                             <label for="id_modulo">Módulo</label>
-                            <select id="id_modulo" name="id_modulo" required>
-                                <option value="">-- Selecciona un módulo --</option>
+                            {{-- Pasamos la URL a un atributo data para usarla en JS --}}
+                            <select id="id_modulo" name="id_modulo" required data-url="{{ route('calif.alumnosPorModulo', ['modulo' => 0]) }}">
+                                <option value="">Selecciona un módulo</option>
                                 @foreach($modulos as $m)
-                                    <option value="{{ $m->id_modulo }}" {{ old('id_modulo')==$m->id_modulo?'selected':'' }}>
+                                    <option value="{{ $m->id_modulo }}" {{ old('id_modulo') == $m->id_modulo ? 'selected' : '' }}>
                                         Mód. {{ $m->numero_modulo }} — {{ $m->nombre_modulo }}
                                     </option>
                                 @endforeach
                             </select>
                             @error('id_modulo') <small class="gm-error">{{ $message }}</small> @enderror
                         </div>
+                        <div>
+                            <label for="id_alumno">Alumno</label>
+                            {{-- El select de alumnos empieza deshabilitado --}}
+                            <select id="id_alumno" name="id_alumno" required disabled>
+                                <option value="">Selecciona un módulo primero</option>
+                            </select>
+                            @error('id_alumno') <small class="gm-error">{{ $message }}</small> @enderror
+                        </div>
                     </div>
 
+                    {{-- Bloque de tipo de calificación y valor. --}}
                     <div class="grid-2">
                         <div>
                             <label for="tipo">Tipo</label>
@@ -98,23 +90,19 @@
                         @error('observacion') <small class="gm-error">{{ $message }}</small> @enderror
                     </div>
 
+                    {{-- Bloque de acciones, botón de guardar y cancelar. --}}
                     <div class="actions">
-                        <a href="{{ route('calif.docente.index') }}" class="btn-ghost">Cancelar</a>
+                        <a href="{{ route('calif.docente.index') }}" class="btn btn-danger">Cancelar</a>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </div>
                 </form>
             </div>
         </section>
     </div>
-
-    <script>
-        // Validación suave en cliente para 0-100
-        const inputCalif = document.getElementById('calificacion');
-        inputCalif?.addEventListener('input', () => {
-            const v = parseFloat(inputCalif.value);
-            if (isNaN(v)) return;
-            if (v < 0) inputCalif.value = 0;
-            if (v > 100) inputCalif.value = 100;
-        });
-    </script>
 @endsection
+
+@push('scripts')
+  {{-- Se incluyen scripts específicos para manejar la lógica de carga dinámica de alumnos y la validación de calificación. --}}
+  @vite('resources/js/calificacionCreate.js')
+  @vite('resources/js/calificacion.js')
+@endpush

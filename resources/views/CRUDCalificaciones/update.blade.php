@@ -1,12 +1,11 @@
 @extends('layouts.encabezadosDoc')
-
-@section('title', 'Gestión Calificaciones')
+@section('title', 'Gestión calificaciones')
 
 @section('content')
     <div class="crud-wrap">
         <section class="crud-card">
             <header class="crud-hero">
-                <h2 class="crud-hero-title">Gestión de Calificaciones</h2>
+                <h2 class="crud-hero-title">Gestión de calificaciones</h2>
                 <p class="crud-hero-subtitle">Editar</p>
 
                 <nav class="crud-tabs">
@@ -19,6 +18,7 @@
             <div class="crud-body">
                 <h1>Editar calificación #{{ $calif->id_calif }}</h1>
 
+                {{-- Bloque de mensajes y errores de validación. --}}
                 @if (session('ok'))
                     <div class="gm-ok">{{ session('ok') }}</div>
                 @endif
@@ -31,17 +31,19 @@
                     </ul>
                 @endif
 
+                {{-- Formulario principal de actualización, utiliza el método put. --}}
                 <form class="gm-form" method="POST" action="{{ route('calif.update', $calif->id_calif) }}">
                     @csrf
                     @method('PUT')
 
                     <h3>Datos</h3>
 
+                    {{-- Bloque de selección de alumno. --}}
                     <div class="grid-2">
                         <div>
                             <label for="id_alumno">Alumno</label>
                             <select id="id_alumno" name="id_alumno" required>
-                                <option value="">-- Selecciona un alumno --</option>
+                                <option value="">Selecciona un alumno</option>
                                 @foreach($alumnos as $a)
                                     @php
                                         $nombre = optional($a->usuario)->nombre.' '.optional($a->usuario)->apellidoP.' '.optional($a->usuario)->apellidoM;
@@ -49,17 +51,18 @@
                                         $sel = old('id_alumno', $calif->id_alumno) == $a->id_alumno ? 'selected' : '';
                                     @endphp
                                     <option value="{{ $a->id_alumno }}" {{ $sel }}>
-                                        {{ $nombre }} — Grupo: {{ $a->grupo }} — Diplomado: {{ $a->num_diplomado }}
+                                        {{ $nombre }} — Grupo: {{ $a->diplomado->grupo }} — Diplomado: {{ $a->diplomado->nombre }}
                                     </option>
                                 @endforeach
                             </select>
                             @error('id_alumno') <small class="gm-error">{{ $message }}</small> @enderror
                         </div>
 
+                        {{-- Bloque de selección de módulo. --}}
                         <div>
                             <label for="id_modulo">Módulo</label>
                             <select id="id_modulo" name="id_modulo" required>
-                                <option value="">-- Selecciona un módulo --</option>
+                                <option value="">Selecciona un módulo</option>
                                 @foreach($modulos as $m)
                                     @php
                                         $sel = old('id_modulo', $calif->id_modulo) == $m->id_modulo ? 'selected' : '';
@@ -73,6 +76,7 @@
                         </div>
                     </div>
 
+                    {{-- Bloque de tipo de calificación y valor. --}}
                     <div class="grid-2">
                         <div>
                             <label for="tipo">Tipo</label>
@@ -106,8 +110,9 @@
                         @error('observacion') <small class="gm-error">{{ $message }}</small> @enderror
                     </div>
 
+                    {{-- Bloque de acciones, botón de actualizar y cancelar. --}}
                     <div class="actions">
-                        <a href="{{ route('calif.docente.index') }}" class="btn-ghost">Cancelar</a>
+                        <a href="{{ route('calif.docente.index') }}" class="btn btn-danger">Cancelar</a>
                         <button type="submit" class="btn btn-primary">Actualizar</button>
                     </div>
                 </form>
@@ -115,6 +120,7 @@
         </section>
     </div>
 
+    {{-- Script de validación de js: asegura que el campo de calificación se mantenga en el rango 0-100. --}}
     <script>
         const inputCalif = document.getElementById('calificacion');
         inputCalif?.addEventListener('input', () => {

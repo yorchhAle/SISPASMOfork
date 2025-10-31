@@ -1,97 +1,132 @@
 @extends('layouts.encabezadosAl')
 
-@section('title', 'Ficha Médica')
+@section('title', 'Ficha médica')
+@push('styles')
+    @vite('resources/css/ficha-medica.css')
+@endpush
 
 @section('content')
-    <div class="crud-wrap">
-      <section class="crud-card">
-        <header class="crud-hero">
-          <h2 class="crud-hero-title">Mi ficha médica</h2>
-          <p class="crud-hero-subtitle">Resumen</p>
+<div class="crud-wrap">
+  <section class="crud-card">
+    <header class="crud-hero">
+      <h2 class="crud-hero-title">Mi ficha médica</h2>
+      <p class="crud-hero-subtitle">Resumen</p>
+      <nav class="crud-tabs">
+        <a href="{{ route('mi_ficha.show') }}" class="tab active">Ver</a>
+        <a href="{{ route('mi_ficha.edit') }}" class="tab">Editar</a>
+      </nav>
+    </header>
 
-          <nav class="crud-tabs">
-            <a href="{{ route('mi_ficha.show') }}" class="tab active">Ver</a>
-            <a href="{{ route('mi_ficha.edit') }}" class="tab">Editar</a>
-          </nav>
-        </header>
+    <div class="crud-body medical-record">
 
-        <div class="crud-body">
-          @if (session('ok'))
-            <div class="gm-ok">{{ session('ok') }}</div>
-          @endif
+      @if (session('ok'))
+        <div class="alert alert-success">{{ session('ok') }}</div>
+      @endif
 
-          {{-- Alumno --}}
-          <h3>Alumno</h3>
-          <div class="gm-kv">
-            <div><span>Nombre:</span> {{ $ficha->alumno?->nombre }} {{ $ficha->alumno?->apellidoP }} {{ $ficha->alumno?->apellidoM }}</div>
+      {{-- Bloque de información del alumno: muestra nombre, matrícula y grupo. --}}
+      <div class="student-info-header">
+        <div class="student-avatar">
+          <span>{{ substr($ficha->alumno?->nombre, 0, 1) }}{{ substr($ficha->alumno?->apellidoP, 0, 1) }}</span>
+        </div>
+        <div class="student-details">
+          <h3 class="student-name">{{ $ficha->alumno?->nombre }} {{ $ficha->alumno?->apellidoP }} {{ $ficha->alumno?->apellidoM }}</h3>
+          <div class="student-meta">
             @isset($ficha->alumno?->matriculaA)
-              <div><span>Matrícula:</span> {{ $ficha->alumno?->matriculaA }}</div>
+              <span>Matrícula: <strong>{{ $ficha->alumno?->matriculaA }}</strong></span>
             @endisset
             @isset($ficha->alumno?->grupo)
-              <div><span>Grupo:</span> {{ $ficha->alumno?->grupo }}</div>
+              <span>Grupo: <strong>{{ $ficha->alumno?->grupo }}</strong></span>
             @endisset
           </div>
+        </div>
+      </div>
 
-          <hr class="gm-sep">
+      <div class="medical-sections-container">
+        
+        {{-- Bloque de alergias: lista las condiciones booleanas y de detalle. --}}
+        <div class="medical-section">
+          <h4 class="section-title">Alergias</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Polvo</span>
+              <span class="info-value {{ $ficha->alergias?->polvo ? 'status-yes' : 'status-no' }}">{{ $ficha->alergias?->polvo ? 'Sí' : 'No' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Polen</span>
+              <span class="info-value {{ $ficha->alergias?->polen ? 'status-yes' : 'status-no' }}">{{ $ficha->alergias?->polen ? 'Sí' : 'No' }}</span>
+            </div>
+            
+            @php
+                $alergiasConDetalle = [
+                    'alimentos' => 'Alimentos',
+                    'animales' => 'Animales',
+                    'insectos' => 'Insectos',
+                    'medicamentos' => 'Medicamentos',
+                    'otro' => 'Otro tipo'
+                ];
+            @endphp
 
-          {{-- Alergias --}}
-          <h3>Alergias</h3>
-          <div class="gm-grid-2">
-            <div><span>Polvo:</span> {{ $ficha->alergias?->polvo ? 'Sí' : 'No' }}</div>
-            <div><span>Polen:</span> {{ $ficha->alergias?->polen ? 'Sí' : 'No' }}</div>
-
-            <div><span>Alimentos:</span> {{ $ficha->alergias?->alimentos ? 'Sí' : 'No' }}</div>
-            <div><span>Detalle alimentos:</span> {{ $ficha->alergias?->alimentos_detalle ?? '—' }}</div>
-
-            <div><span>Animales:</span> {{ $ficha->alergias?->animales ? 'Sí' : 'No' }}</div>
-            <div><span>Detalle animales:</span> {{ $ficha->alergias?->animales_detalle ?? '—' }}</div>
-
-            <div><span>Insectos:</span> {{ $ficha->alergias?->insectos ? 'Sí' : 'No' }}</div>
-            <div><span>Detalle insectos:</span> {{ $ficha->alergias?->insectos_detalle ?? '—' }}</div>
-
-            <div><span>Medicamentos:</span> {{ $ficha->alergias?->medicamentos ? 'Sí' : 'No' }}</div>
-            <div><span>Detalle medicamentos:</span> {{ $ficha->alergias?->medicamentos_detalle ?? '—' }}</div>
-
-            <div><span>Otro:</span> {{ $ficha->alergias?->otro ? 'Sí' : 'No' }}</div>
-            <div><span>Detalle otro:</span> {{ $ficha->alergias?->otro_detalle ?? '—' }}</div>
-          </div>
-
-          <hr class="gm-sep">
-
-          {{-- Enfermedades --}}
-          <h3>Enfermedades</h3>
-          <div class="gm-grid-2">
-            <div><span>Enfermedad crónica:</span> {{ $ficha->enfermedades?->enfermedad_cronica ? 'Sí' : 'No' }}</div>
-            <div><span>Detalle crónica:</span> {{ $ficha->enfermedades?->enfermedad_cronica_detalle ?? '—' }}</div>
-
-            <div><span>Toma medicamentos:</span> {{ $ficha->enfermedades?->toma_medicamentos ? 'Sí' : 'No' }}</div>
-            <div><span>Detalle medicamentos:</span> {{ $ficha->enfermedades?->toma_medicamentos_detalle ?? '—' }}</div>
-
-            <div><span>Visita al médico:</span> {{ $ficha->enfermedades?->visita_medico ? 'Sí' : 'No' }}</div>
-            <div><span>Detalle visitas:</span> {{ $ficha->enfermedades?->visita_medico_detalle ?? '—' }}</div>
-
-            <div><span>Nombre del médico:</span> {{ $ficha->enfermedades?->nombre_medico ?? '—' }}</div>
-            <div><span>Teléfono del médico:</span> {{ $ficha->enfermedades?->telefono_medico ?? '—' }}</div>
-          </div>
-
-          <hr class="gm-sep">
-
-          {{-- Contacto de emergencia --}}
-          <h3>Contacto de emergencia</h3>
-          <div class="gm-grid-2">
-            <div><span>Nombre:</span> {{ $ficha->contacto?->nombre ?? '—' }} {{ $ficha->contacto?->apellidos ?? '' }}</div>
-            <div><span>Parentesco:</span> {{ $ficha->contacto?->parentesco ?? '—' }}</div>
-
-            <div><span>Teléfono:</span> {{ $ficha->contacto?->telefono ?? '—' }}</div>
-            <div><span>Domicilio:</span> {{ $ficha->contacto?->domicilio ?? '—' }}</div>
-
-            <div><span>Institución:</span> {{ $ficha->contacto?->institucion ?? '—' }}</div>
-          </div>
-
-          <div class="actions">
-            <a class="btn btn-primary" href="{{ route('mi_ficha.edit') }}">Editar</a>
+            {{-- Bucle para alergias con detalle (alimentos, medicamentos, etc.). --}}
+            @foreach ($alergiasConDetalle as $key => $label)
+              <div class="info-item-full">
+                <div class="info-item-header">
+                  <span class="info-label">{{ $label }}</span>
+                  <span class="info-value {{ $ficha->alergias?->{$key} ? 'status-yes' : 'status-no' }}">{{ $ficha->alergias?->{$key} ? 'Sí' : 'No' }}</span>
+                </div>
+                @if($ficha->alergias?->{$key.'_detalle'})
+                  <div class="info-detail">{{ $ficha->alergias?->{$key.'_detalle'} }}</div>
+                @endif
+              </div>
+            @endforeach
           </div>
         </div>
-      </section>
+
+        {{-- Bloque de enfermedades y condiciones médicas. --}}
+        <div class="medical-section">
+          <h4 class="section-title">Enfermedades y Condiciones Médicas</h4>
+          <div class="info-grid">
+            <div class="info-item-full">
+              <div class="info-item-header"><span class="info-label">Enfermedad Crónica</span><span class="info-value {{ $ficha->enfermedades?->enfermedad_cronica ? 'status-yes' : 'status-no' }}">{{ $ficha->enfermedades?->enfermedad_cronica ? 'Sí' : 'No' }}</span></div>
+              @if($ficha->enfermedades?->enfermedad_cronica_detalle)<div class="info-detail">{{ $ficha->enfermedades?->enfermedad_cronica_detalle }}</div>@endif
+            </div>
+
+            <div class="info-item-full">
+              <div class="info-item-header"><span class="info-label">Toma Medicamentos</span><span class="info-value {{ $ficha->enfermedades?->toma_medicamentos ? 'status-yes' : 'status-no' }}">{{ $ficha->enfermedades?->toma_medicamentos ? 'Sí' : 'No' }}</span></div>
+              @if($ficha->enfermedades?->toma_medicamentos_detalle)<div class="info-detail">{{ $ficha->enfermedades?->toma_medicamentos_detalle }}</div>@endif
+            </div>
+
+            <div class="info-item-full">
+              <div class="info-item-header"><span class="info-label">Visita al Médico Regularmente</span><span class="info-value {{ $ficha->enfermedades?->visita_medico ? 'status-yes' : 'status-no' }}">{{ $ficha->enfermedades?->visita_medico ? 'Sí' : 'No' }}</span></div>
+              @if($ficha->enfermedades?->visita_medico_detalle)<div class="info-detail">{{ $ficha->enfermedades?->visita_medico_detalle }}</div>@endif
+            </div>
+            
+            {{-- Datos del médico de contacto. --}}
+            <div class="info-item"><span class="info-label">Nombre del Médico</span><span class="info-value">{{ $ficha->enfermedades?->nombre_medico ?? '—' }}</span></div>
+            <div class="info-item"><span class="info-label">Teléfono del Médico</span><span class="info-value">{{ $ficha->enfermedades?->telefono_medico ?? '—' }}</span></div>
+          </div>
+        </div>
+
+        {{-- Bloque de contacto de emergencia. --}}
+        <div class="medical-section">
+          <h4 class="section-title">Contacto de Emergencia</h4>
+          <div class="info-grid">
+            <div class="info-item"><span class="info-label">Nombre Completo</span><span class="info-value">{{ $ficha->contacto?->nombre ?? '—' }} {{ $ficha->contacto?->apellidos ?? '' }}</span></div>
+            <div class="info-item"><span class="info-label">Parentesco</span><span class="info-value">{{ $ficha->contacto?->parentesco ?? '—' }}</span></div>
+            <div class="info-item"><span class="info-label">Teléfono</span><span class="info-value">{{ $ficha->contacto?->telefono ?? '—' }}</span></div>
+            <div class="info-item"><span class="info-label">Institución (Trabajo)</span><span class="info-value">{{ $ficha->contacto?->institucion ?? '—' }}</span></div>
+            <div class="info-item-full"><span class="info-label">Domicilio: </span><span class="info-value">{{ $ficha->contacto?->domicilio ?? '—' }}</span></div>
+          </div>
+        </div>
+      </div>
+
+      {{-- Bloque de acciones: enlace al formulario de edición de la ficha médica. --}}
+      <div class="crud-actions">
+        <a class="btn btn-primary" href="{{ route('mi_ficha.edit') }}">Editar</a>
+      </div>
     </div>
+  </section>
+</div>
+@endsection
+@section('scripts')
+    @vite(['resources/js/fichaValidacion.js'])
 @endsection
