@@ -1,7 +1,7 @@
 :root{
   --color-principal:#112543;
   --color-rojo:#E51E23;
-  --color-gris:#f5f5f5;
+  --color-gris:#f8f8f8;
   --color-texto:#000000;
   --color-blanco:#ffffff;
   --font-family:'Montserrat', sans-serif;
@@ -104,7 +104,6 @@ body{
 .nav-links a:hover::after* {
   width: 100%;
 }
-  
 
 /* Sidebar */
 .sidebar{
@@ -454,7 +453,7 @@ td.has-practica {
 }
 
 .report-item:hover {
-  background-color: var(--ink); /* Usa una variable de color para el hover */
+  background-color: var(--ink); 
 }
 
 .report-link {
@@ -494,6 +493,96 @@ td.has-practica {
   opacity: 0.7;
   color: var(--color-texto);
 }
+
+
+/*Notificaciones*/
+#notificaciones-container {
+  max-height: 400px; /* Altura máxima del panel */
+  overflow-y: auto;  /* Scroll vertical si hay muchas notificaciones */
+  padding-right: 4px; /* Para que no tape el scroll */
+}
+
+
+/* Cada notificación */
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0; /* Gris claro */
+  padding: 10px 12px;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.notification-item:hover {
+  background-color: #f5faff; 
+}
+
+/* Información de la notificación (tipo, usuario, fecha) */
+.notification-item .info {
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-item .info span {
+  line-height: 1.3;
+}
+
+.notification-item .info .tipo {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #112543;
+}
+
+.notification-item .info .fecha {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.notification-item .estado {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 9999px;
+}
+
+.notification-item.unread .estado {
+  background-color: #e0f2fe; 
+  color: var(--color-principal); 
+}
+
+.notification-item.read .estado {
+  background-color: #f3f4f6; 
+  color: #6b7280; 
+}
+
+#notificaciones-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+#notificaciones-pagination button {
+  background-color: #3b82f6; 
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#notificaciones-pagination button:hover {
+  background-color: var(--color-principal);
+}
+
+#notificaciones-pagination button:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
 
 /* Responsivo */
 @media (max-width: 980px){

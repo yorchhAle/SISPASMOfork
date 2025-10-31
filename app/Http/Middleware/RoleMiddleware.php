@@ -9,21 +9,27 @@ use Illuminate\Support\Facades\Auth;
 class RoleMiddleware
 {
     /**
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * Maneja la solicitud entrante verificando autenticación y rol.
      */
-    public function handle($request, Closure $next, ...$roles)
+    public function handle(Request $request, Closure $next, ...$roles)
     {
         $user = Auth::user();
-        if (!$user || !$user->rol) {
-            abort(403);
+
+        if (!$user) {
+            return redirect()
+                ->route('inicio')
+                ->with('message', 'Tu sesión ha expirado por inactividad. Por favor, inicia sesión nuevamente.');
         }
 
-        $nombreRol = $user->rol->nombre_rol ?? null;
+        if (!$user->rol) {
+            abort(403, 'No tienes un rol asignado.');
+        }
+
+        $nombreRol = strtolower($user->rol->nombre_rol ?? '');
         $roles = array_map('strtolower', $roles);
 
-        if (!in_array(strtolower($nombreRol), $roles, true)) {
-            abort(403);
+        if (!in_array($nombreRol, $roles, true)) {
+            abort(403, 'No tienes permiso para acceder a esta sección.');
         }
 
         return $next($request);

@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grupo Morelos</title>
+    {{-- Se incluyen fuentes y estilos css específicos para la página de contacto. --}}
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @vite('resources/css/inicio.css')
 </head>
 <body>
+
+{{-- Bloque de encabezado (header), contiene logo y navegación principal para usuarios externos. --}}
 <header class="site-header">
   <div class="header-container">
     <div class="logo">
@@ -15,6 +18,7 @@
       <span>GRUPO MORELOS</span>
     </div>
 
+    {{-- Bloque de secciones de la página. --}}      
     <div class="header-right">
         <nav class="main-nav">
         <ul class="nav-links">
@@ -28,6 +32,7 @@
         </nav>
     </div>
 
+      {{-- Bloque para ingresar como administrador. --}}      
       <a href="{{ route('admin.login') }}" class="user-icon" aria-label="Cuenta">
         <img src="{{ asset('images/user.png') }}" alt="Cuenta">
       </a>
@@ -41,6 +46,7 @@
         </div>
     </section>
 
+    {{-- Bloque sobre nosotros. --}}      
     <section class="sobre-nosotros" id="sobre-nosotros">
         <div class="container contenido">
             <h2>SOBRE NOSOTROS</h2>
@@ -64,6 +70,7 @@
         </div>
     </section>
 
+    {{-- Bloque sobre nuestra historia. --}}
     <section class="historia">
         <div class="container">
             <div class="historia-grid">
@@ -78,6 +85,7 @@
         </div>
     </section>
 
+    {{-- Bloque sobre misión, visión y valores. --}}
     <section class="mision-vision-valores">
         <div class="container">
             <h2 class="section-title">MISIÓN, VISIÓN Y VALORES</h2>
@@ -99,6 +107,7 @@
         </div>
     </section>
 
+    {{-- Bloque sobre aliados y certificaciones. --}}
     <section class="logos-strip" aria-label="Logos de aliados y certificaciones">
         <div class="container">
             <h2 class="logos-title">Aliados y certificaciones</h2>
@@ -147,8 +156,7 @@
             </ul>
         </div>
     </section>
-
-
+    
     <footer class="site-footer">
         <div class="container">
             <p>&copy; 2025 Grupo Morelos. Todos los derechos reservados.</p>

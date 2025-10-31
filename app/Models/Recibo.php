@@ -17,10 +17,11 @@ class Recibo extends Model
         'concepto',
         'monto',
         'comprobante_path',  
+        'pdf_path',
         'estatus',           
         'fecha_validacion',
         'validado_por',
-        'comentarios',
+        'comentarios'
     ];
 
     protected $casts = [

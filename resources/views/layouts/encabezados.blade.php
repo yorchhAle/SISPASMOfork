@@ -6,12 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@yield('title', 'Panel de Administrador')</title>
 
+    {{--Inclusión de fuentes y scripts/css de la aplicación y el dashboard. --}}
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/dashboard.css', 'resources/css/crud.css', 'resources/js/dashboard.js'])
-    @stack('head')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')    
     </head>
 
 <body>
+    {{-- Bloque de encabezado (header), contiene logo y navegación principal. --}}
     <header class="site-header">
         <div class="header-container">
             <div class="logo">
@@ -25,6 +28,7 @@
                 </li>
                 
                 <li>
+                    {{-- Formulario de cierre de sesión (logout), utiliza post y es activado por javascript. --}}
                     <form method="POST" action="{{ route('admin.logout') }}">
                         @csrf
                         <a href="#" onclick="event.preventDefault(); this.closest('form').submit();">Cerrar sesión</a>
@@ -36,6 +40,7 @@
     </header>
 
     <div class="dash">
+        {{-- Bloque de barra lateral (aside/sidebar), menú de navegación principal. --}}
         <aside class="sidebar">
             <div class="profile">
                 <div class="avatar" aria-hidden="true">👤</div>
@@ -49,19 +54,21 @@
             </div>
 
             <nav class="nav">
+                {{-- Grupo de enlaces, usuarios. --}}
                 <div class="group">
                     <div class="group-title">USUARIOS</div>
                     <ul class="menu">
                         <li class="dropdown">
-                        <li><a href="{{route('admin.index')}}">Listar administradores</a></li>
-                        <li><a href="{{route('coordinadores.index')}}">Listar coordinadores</a></li>
-                        <li><a href="{{ route('docentes.index') }}">Listar docente</a></li>
-                        <li><a href="{{ route('alumnos.index') }}">Listar Alumnos</a></li>
-                        <li><a href="{{route('aspirantes.index')}}">Listar aspirantes</a></li>
+                        <li><a href="{{route('admin.index')}}">Administradores</a></li>
+                        <li><a href="{{route('coordinadores.index')}}">Coordinadores</a></li>
+                        <li><a href="{{ route('docentes.index') }}">Docente</a></li>
+                        <li><a href="{{ route('alumnos.index') }}">Alumnos</a></li>
+                        <li><a href="{{route('aspirantes.index')}}">Aspirantes</a></li>
                         </li>
                     </ul>
                 </div>
 
+                {{-- Grupo de enlaces, académico. --}}
                 <div class="divider"></div>
                 <div class="group">
                     <div class="group-title">ACADÉMICO</div>
@@ -74,6 +81,7 @@
                     </ul>
                 </div>
 
+                {{-- Grupo de enlaces, administración. --}}
                 <div class="divider"></div>
                 <div class="group">
                     <div class="group-title">ADMINISTRACIÓN</div>
@@ -81,16 +89,17 @@
                         <li><a href="{{route('recibos.admin.index')}}">Recibos</a></li>
                         <li><a href="{{route('fichasmedicas.index')}}">Ficha médica</a></li>
                         <li><a href="{{route('citas.index')}}">Citas</a></li>
-                        <li><a href="{{ route('quejas.index') }}">Queja/sugerencia</a></li>
+                        <li><a href="{{ route('quejas.index') }}">Dudas/sugerencias</a></li>
                     </ul>
                 </div>
 
+                {{-- Grupo de enlaces, soporte. --}}
                 <div class="divider"></div>
                 <div class="group">
                     <div class="group-title">SOPORTE</div>
                     <ul class="menu">
-                        <li><a href="">Notificaciones</a></li>
-                        <li><a href="#">Respaldo y restauración</a></li>
+                        <li><a href="{{ route('notificaciones.index') }}">Mis notificaciones</a></li>
+                        <li><a href="{{ route('admin.backup.manual') }}">Respaldo de BD</a></li>
                     </ul>
                 </div>
 
@@ -107,6 +116,8 @@
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.userway.org/widget.js" data-account="kvnkkEfZx0"></script>
+
     @stack('scripts')
 </body>
 </html>

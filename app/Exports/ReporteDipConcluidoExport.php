@@ -17,6 +17,9 @@ class ReporteDipConcluidoExport implements FromCollection, WithHeadings
         $this->reportType = $reportType;
     }
 
+    /*
+     * Define los encabezados de las columnas del archivo Excel.
+    */
     public function headings(): array
     {
         if ($this->reportType === 'egresados') {

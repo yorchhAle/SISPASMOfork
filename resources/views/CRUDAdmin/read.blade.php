@@ -1,6 +1,5 @@
 @extends('layouts.encabezados')
-
-@section('title', 'Gestión Administradores')
+@section('title', 'Gestión administradores')
 
 @section('content')
     <div class="crud-wrap">
@@ -19,9 +18,7 @@
             <div class="crud-body">
                 <h1>Administradores</h1>
 
-                <p><a href="{{ route('admin.create') }}" class="btn btn-primary">Nuevo
-                        administrador</a></p>
-
+                {{-- Bloque de mensajes, muestra mensajes de éxito (`success` o `ok`) de la sesión. --}}
                 @if (session('success'))
                     <div class="gm-ok">{{ session('success') }}</div>
                 @endif
@@ -29,6 +26,7 @@
                     <div class="gm-ok">{{ session('ok') }}</div>
                 @endif
 
+                {{-- Bloque de listado, muestra la tabla si hay datos o un mensaje de vacío. --}}
                 @if ($admin->count() === 0)
                     <div class="gm-empty">No hay administradores registrados.</div>
                 @else
@@ -47,8 +45,10 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {{-- Bloque de datos (bucle), itera sobre la colección paginada de administradores ($admin). --}}
                                 @foreach ($admin as $a)
                                     <tr>
+                                        {{-- Acceso a la relación 'usuario' para obtener el nombre completo. --}}
                                         <td>
                                             {{ optional($a->usuario)->nombre }}
                                             {{ optional($a->usuario)->apellidoP }}
@@ -62,16 +62,15 @@
                                         <td>{{ $a->estatus }}</td>
                                         <td>
                                             <div class="table-actions">
-                                                <a href="{{ route('admin.edit', $a) }}"
-                                                    class="btn-ghost">Actualizar</a>
+                                                {{-- Botón de acción, enlace al formulario de edición. --}}
+                                                <a href="{{ route('admin.edit', $a) }}" class="btn btn-ghost">Actualizar</a>
 
+                                                {{-- Formulario de eliminación, utiliza el método delete y requiere confirmación de js. --}}
                                                 <form action="{{ route('admin.destroy', $a) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('¿Eliminar este administrador y su usuario asociado?')">
+                                                    method="POST" onsubmit="return confirm('¿Eliminar este administrador y su usuario asociado?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit"
-                                                        class="btn btn-danger">Eliminar</button>
+                                                    <button type="submit" class="btn btn-danger">Eliminar</button>
                                                 </form>
                                             </div>
                                         </td>
@@ -81,6 +80,7 @@
                         </table>
                     </div>
 
+                    {{-- Bloque de paginación, muestra los enlaces de paginación de laravel. --}}
                     <div class="pager">
                         {{ $admin->links() }}
                     </div>

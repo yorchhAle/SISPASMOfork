@@ -4,11 +4,14 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Nueva queja/sugerencia</title>
+
+  {{-- Se incluyen fuentes y estilos css específicos. --}}
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
   @vite(['resources/css/dashboard.css', 'resources/css/crud.css'])
 </head>
 <body>
 
+  {{-- Bloque de encabezado (header): contiene logo y navegación. --}}
   <header class="site-header">
     <div class="header-container">
       <div class="logo">
@@ -33,6 +36,7 @@
           </div>
 
           <div class="crud-body">
+          {{-- Bloque de errores, muestra los errores de validación de laravel (si los hay). --}}
             @if ($errors->any())
               <div class="gm-errors">
                 <ul>
@@ -43,6 +47,7 @@
               </div>
             @endif
 
+            {{-- Formulario principal, envía la queja/sugerencia para su registro (método post). --}}
             <form class="gm-form" method="POST" action="{{ route('quejas.store') }}">
               @csrf
               <div>
@@ -57,6 +62,7 @@
 
                 <div>
                   <label for="contacto"><strong>Contacto (opcional)</strong></label>
+                  {{-- Campo de contacto, opcional, para seguimiento. --}}
                   <input id="contacto" name="contacto" type="text" placeholder="Correo o teléfono"
                          value="{{ old('contacto') }}">
                 </div>
@@ -68,8 +74,9 @@
                 </div>
               </div>
 
+              {{-- Bloque de acciones, botón de envío y cancelar. --}}
               <div class="actions">
-                <a class="btn-ghost" href="{{ url()->previous() }}">Cancelar</a>
+                <a class="btn btn-danger" href="{{ url()->previous() }}">Cancelar</a>
                 <button class="btn btn-primary" type="submit">Enviar</button>
               </div>
             </form>

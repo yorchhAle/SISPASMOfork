@@ -19,16 +19,33 @@
       <img class="logo" src="{{ asset('images/logosecundario.png') }}" alt="Grupo Morelos">
       <h1 class="title">Grupo Morelos Rescate Anfibio</h1>
 
+      {{-- Formulario de login: envía las credenciales (matrícula y contraseña) a la ruta de procesamiento. --}}
       <form method="POST" action="{{ route('docente.login.post') }}" class="form">
-      @csrf
-        <label class="label" for="matricula">Matrícula</label>
-        <input class="input" id="matricula" name="matricula" type="text" placeholder="Matrícula" required>
+        @csrf
 
+        {{-- Campo de matrícula --}}
+        <label class="label" for="matricula">Matrícula</label>
+        <input class="input" id="matricula" name="matricula" type="text" placeholder="Matrícula" value="{{ old('matricula') }}" required autofocus>
+        
+        {{-- Muestra errores de validación específicos de laravel para el campo 'matricula'. --}}
+        @error('matricula')
+          <div class="error">{{ $message }}</div>
+        @enderror
+
+        {{-- Campo de contraseña --}}
         <label class="label" for="password">Contraseña</label>
         <input class="input" id="password" name="password" type="password" placeholder="Contraseña" required>
+        
+        {{-- Muestra errores de validación específicos de laravel para el campo 'password'. --}}
+        @error('password')
+          <div class="error">{{ $message }}</div>
+        @enderror
 
+        {{-- Botón de acción para ingresar. --}}
         <button type="submit" class="btn btn-primary">Ingresar</button>
-        <a href="{{ route('password.request') }}" class="btn btn-secondary">Olvidé contraseña</a>
+
+        {{-- Enlace de acción para restablecer la contraseña. --}}
+        <a href="{{ route('password.request') }}" class="btn btn-danger">Olvidé contraseña</a>
       </form>
     </div>
   </div>

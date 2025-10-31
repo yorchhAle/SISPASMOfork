@@ -15,21 +15,36 @@
         src="{{ asset('images/loginadministrador.png') }}"
         alt="Grupo Morelos — Formación en campo">
     </div>
+
     <div class="right">
       <div class="card">
         <img class="logo" src="{{ asset('images/logosecundario.png') }}" alt="Grupo Morelos">
         <h2 class="title">Grupo Morelos Rescate Anfibio</h2>
+
+        {{-- Formulario de login, envía las credenciales a la ruta de procesamiento (post). --}}
         <form method="POST" action="{{ route('admin.login.post') }}" class="form">
           @csrf
+
           <label class="label" for="usuario">Usuario (Coordinador/Administrador)</label>
           <input class="input" id="usuario" name="usuario" type="text" value="{{ old('usuario') }}" placeholder="Correo electrónico" required autofocus>
+          {{-- Muestra errores de validación específicos de laravel para el campo 'usuario'. --}}
+          @error('usuario')
+            <div class="error">{{ $message }}</div>
+          @enderror
+
           <label class="label" for="password">Contraseña</label>
           <input class="input" id="password" name="password" type="password" placeholder="Contraseña" required>
-          @if ($errors->any())
-            <div class="error">{{ $errors->first() }}</div>
+          {{-- Muestra errores de validación específicos de laravel para el campo 'password'. --}}
+          @error('password')
+            <div class="error">{{ $message }}</div>
+          @enderror
+
+          {{-- Muestra un error genérico si las credenciales son inválidas (error de autenticación). --}}
+          @if ($errors->has('usuario') && $errors->first('usuario') === 'Credenciales inválidas.')
+            <div class="error">{{ $errors->first('usuario') }}</div>
           @endif
+
           <button type="submit" class="btn btn-primary">Ingresar</button>
-          <button type="button" class="btn btn-secondary">Olvidé contraseña</button>
         </form>
       </div>
     </div>

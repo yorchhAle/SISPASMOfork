@@ -9,10 +9,12 @@
     </div>
 
     <div class="crud-body">
+      {{-- Bloque de mensajes, muestra mensaje de éxito (`success`) de la sesión. --}}
       @if (session('success'))
         <div class="gm-ok">{{ session('success') }}</div>
       @endif
 
+      {{-- Bloque condicional, muestra la tabla si hay horarios o un mensaje de vacío. --}}
       @if ($horarios->isEmpty())
         <div class="gm-empty">No tienes clases programadas.</div>
       @else
@@ -30,6 +32,7 @@
               </tr>
             </thead>
             <tbody>
+              {{-- Bloque de datos (bucle), itera sobre la colección de horarios ($horarios) asignados al docente. --}}
               @foreach ($horarios as $horario)
                 <tr>
                   <td>
@@ -43,6 +46,7 @@
                   <td>{{ \Carbon\Carbon::parse($horario->hora_inicio)->format('H:i') }}</td>
                   <td>{{ \Carbon\Carbon::parse($horario->hora_fin)->format('H:i') }}</td>
                   <td>
+                    {{-- Bloque switch, muestra un badge visual según la modalidad (presencial, virtual, práctica). --}}
                     @switch($horario->modalidad)
                       @case('Presencial')
                         <span class="badge badge-validado">Presencial</span>

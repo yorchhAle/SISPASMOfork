@@ -1,5 +1,4 @@
 @extends('layouts.encabezadosAs')
-
 @section('title', 'Citas')
 
 @section('content')
@@ -14,6 +13,7 @@
       </div>
 
       <div class="crud-body">
+        {{-- Bloque de mensajes, muestra mensajes de éxito (`ok`) y errores de validación. --}}
         @if(session('ok')) <div class="gm-ok">{{ session('ok') }}</div> @endif
         @if($errors->any())
           <div class="gm-errors"><ul>@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>
@@ -31,6 +31,7 @@
               </tr>
             </thead>
             <tbody>
+              {{-- Bloque de datos (bucle): itera sobre la colección paginada de citas ($citas). --}}
               @forelse($citas as $c)
                 <tr>
                   <td>{{ \Carbon\Carbon::parse($c->fecha_cita)->format('d/m/Y') }}</td>
@@ -39,7 +40,9 @@
                   <td>{{ $c->lugar }}</td>
                   <td>
                     <div class="table-actions">
+                    {{-- Bloque condicional de cancelación, solo muestra el formulario si el estatus es 'pendiente' o 'aprobada'. --}}
                       @if(in_array($c->estatus,['Pendiente','Aprobada']))
+                        {{-- Formulario de cancelación, utiliza el método delete para cambiar el estatus a 'cancelada'. --}}
                         <form method="POST" action="{{ route('aspirante.citas.cancel',$c) }}">
                           @csrf @method('DELETE')
                           <button class="btn-danger" onclick="return confirm('¿Cancelar la cita?')">Cancelar</button>
@@ -56,7 +59,7 @@
             </tbody>
           </table>
         </div>
-
+        {{-- Bloque de paginación, muestra los enlaces de paginación de laravel. --}}
         <div class="pager">{{ $citas->links() }}</div>
       </div>
     </div>
