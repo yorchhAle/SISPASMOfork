@@ -1,7 +1,7 @@
 :root{
     --color-principal: #112543;
     --color-rojo: #E51E23;
-    --color-gris: #f5f5f5;
+    --color-gris:#f8f8f8;
     --color-texto: #000000;
     --color-blanco: #ffffff;
     --font-family: 'Montserrat', sans-serif;
@@ -325,8 +325,14 @@ body {
     border:1px solid rgba(0,0,0,.08);
     transition: filter .15s ease, transform .06s ease, background-color .15s ease;
   }
-  .btn-ghost:hover{ background: var(--color-gris); filter: brightness(1.02); }
-  .btn-ghost:active{ transform: translateY(1px); }
+  .btn-ghost:hover{ 
+    background: var(--color-gris); 
+    filter: brightness(1.02); 
+  }
+
+  .btn-ghost:active{ 
+    transform: translateY(1px); 
+  }
   
   /* Responsive */
   @media (max-width: 980px){
@@ -335,3 +341,254 @@ body {
     .crud-tabs{ gap: 8px; }
     .gm-form > div{ grid-template-columns: 1fr; }
   }
+
+
+  /* --- PEGA ESTO EN TU CSS --- */
+/* (Puedes reemplazar tu .form y .btn-secondary existentes) */
+
+:root{
+    --color-principal: #112543;
+    --color-rojo: #E51E23;
+    --color-gris:#f8f8f8;
+    --color-texto: #000000;
+    --color-blanco: #ffffff;
+    --font-family: 'Montserrat', sans-serif;
+    --spacing-unit: 1rem;
+    --radius-xl: 32px;
+    --radius-2xl: 48px; 
+    --shadow: 0 10px 25px rgba(0,0,0,.18);
+}
+  
+*{ 
+  box-sizing: border-box 
+}
+  
+html, body { 
+  height: 95% 
+}
+  
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  color: var(--color-texto);
+  background: #000;
+}
+  
+.layout {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+  
+.left{
+  position:relative;
+  overflow:hidden
+}
+      
+.left-img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+  
+.right {
+  height:100%;
+  /* Habilitamos el scroll vertical si el contenido es muy largo */
+  overflow-y: auto; 
+  background: var(--color-gris);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 3vw, 40px);
+}
+  
+.card {
+  width: min(640px, 96vw); /* Un poco más ancho para el grid */
+  background: var(--color-principal);
+  color: var(--color-blanco);
+  border-radius: var(--radius-2xl);
+  padding: clamp(24px, 4vw, 48px);
+  box-shadow: var(--shadow);
+  /* Permitir que la tarjeta crezca si es necesario */
+  margin: 2rem 0; 
+}
+  
+.logo {
+  display:block;
+  width:84px;
+  height:auto;
+  object-fit:contain;
+  margin: 0 auto 12px auto;
+}
+  
+.title {
+  text-align:center;
+  font-weight:800;
+  font-size: clamp(22px, 2.6vw, 32px);
+  line-height:1.2;
+  margin: 6px 0 18px 0;
+}
+  
+.form {
+  display:flex;
+  flex-direction:column;
+  /* El gap lo manejará el grid ahora */
+}
+
+/* --- NUEVO: Grid para el formulario --- 
+*/
+.form-grid {
+  display: grid;
+  /* Dos columnas flexibles, con un mínimo de 200px */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+  gap: 14px 20px; /* Espacio vertical y horizontal */
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* Espacio entre label e input */
+}
+
+/* NUEVO: Clase para que un campo ocupe 2 columnas */
+.form-group.span-2 {
+  grid-column: 1 / -1; /* Ocupa todo el ancho */
+}
+
+/* NUEVO: Contenedor para botones y checkbox */
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 1rem;
+}
+
+/* NUEVO: Estilo para el label del checkbox */
+.label-checkbox {
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.label-checkbox input {
+  transform:scale(1.1);
+  width: auto;
+}
+  
+.label {
+  font-weight:800;
+  letter-spacing:.2px;
+  font-size: 0.9rem;
+}
+  
+.input {
+  width:100%;
+  border:none;
+  outline:none;
+  background: var(--color-blanco);
+  color: var(--color-texto);
+  padding: 14px 18px;
+  border-radius: 999px;
+  font-size: 16px;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.06);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+/* Efecto focus mejorado (inspirado en tu CSS) */
+.input:focus {
+  border-color: var(--color-rojo);
+  box-shadow: 0 0 0 3px rgba(229,30,35,.18);
+}
+  
+.btn {
+  display:inline-block;
+  width:100%;
+  text-align:center;
+  border:none;
+  border-radius: 999px;
+  padding: 14px 18px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 1rem;
+}
+  
+.btn-primary {
+  color: var(--color-blanco);
+  background: var(--color-rojo);
+  box-shadow: 0 6px 14px rgba(229,30,35,.35);
+  transition: transform .06s ease, filter .15s ease;
+}
+  
+.btn-primary:hover { 
+  filter: brightness(1.06); 
+  transform: translateY(-1px); 
+}
+  
+.btn-primary:active { 
+  transform: translateY(0); 
+}
+
+/* --- MODIFICADO: Reemplazamos .btn-secondary con .btn-ghost --- 
+  (Estilo tomado de la parte "CRUD" de tu CSS)
+*/
+.btn-ghost{
+  color: var(--color-blanco);
+  background: transparent;
+  border:1px solid rgba(255,255,255,.32);
+  transition: filter .15s ease, transform .06s ease, background-color .15s ease;
+}
+.btn-ghost:hover{ 
+  background: rgba(255,255,255,.08);
+  filter: brightness(1.02); 
+}
+.btn-ghost:active{ 
+  transform: translateY(1px); 
+}
+  
+.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* NUEVO: Estilo para errores inline */
+.form-error-inline {
+  color: #fca5a5; /* Un rojo más claro que resalte en el fondo azul */
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding-left: 10px;
+}
+  
+  /* Responsivo */
+@media (max-width: 980px){
+  .layout{ 
+    grid-template-columns: 1fr; 
+  }
+  .left{ 
+    display:none; 
+  }
+  .right{ 
+    padding: 28px; 
+    /* Asegurar que el scroll funcione bien en móvil */
+    height: auto;
+    min-height: 100dvh;
+  }
+  .card{ 
+    width:min(640px, 96vw); 
+    border-radius: 28px; 
+    margin: 0; /* Sin margen en móvil */
+  }
+}
+
+/* Aquí iría el resto de tu CSS (.crud-wrap, .crud-card, etc.)
+  ... 
+*/

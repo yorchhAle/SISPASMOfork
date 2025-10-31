@@ -1,6 +1,5 @@
 @extends('layouts.encabezados')
-
-@section('title', 'Panel de Control - Listar Docentes')
+@section('title', 'Gestión docentes')
 
 @section('content')
     <div class="crud-wrap">
@@ -9,6 +8,7 @@
                 <h2 class="crud-hero-title">Gestión de docentes</h2>
                 <p class="crud-hero-subtitle">Listado</p>
 
+                {{-- Navegación de pestañas, el link "listar docentes" está marcado como activo. --}}
                 <nav class="crud-tabs">
                     <a href="{{ route('docentes.create') }}" class="tab">Registrar</a>
                     <a href="{{ route('docentes.index') }}" class="tab active">Listar docentes</a>
@@ -18,8 +18,7 @@
             <div class="crud-body">
                 <h1>Docentes</h1>
 
-                <p><a href="{{ route('docentes.create') }}" class="btn btn-primary">Nuevo docente</a></p>
-
+                {{-- Bloque de mensajes, muestra mensajes de éxito (`success` o `ok`) de la sesión. --}}
                 @if (session('success'))
                     <div class="gm-ok">{{ session('success') }}</div>
                 @endif
@@ -27,6 +26,7 @@
                     <div class="gm-ok">{{ session('ok') }}</div>
                 @endif
 
+                {{-- Bloque de listado, muestra la tabla si hay datos o un mensaje de vacío. --}}
                 @if ($docentes->count() === 0)
                     <div class="gm-empty">No hay docentes registrados.</div>
                 @else
@@ -34,7 +34,6 @@
                         <table class="gm-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Matrícula</th>
                                     <th>Nombre</th>
                                     <th>Correo</th>
@@ -45,9 +44,9 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            {{-- Bloque de datos (bucle), itera sobre la colección paginada de docentes ($docentes). --}}
                                 @foreach ($docentes as $d)
                                     <tr>
-                                        <td>{{ $d->id_docente }}</td>
                                         <td>{{ $d->matriculaD }}</td>
                                         <td>
                                             {{ optional($d->usuario)->nombre }}
@@ -60,8 +59,10 @@
                                         <td>{{ is_numeric($d->salario) ? number_format($d->salario, 2) : $d->salario }}</td>
                                         <td>
                                             <div class="table-actions">
-                                                <a href="{{ route('docentes.edit', $d) }}" class="btn-ghost">Actualizar</a>
+                                                {{-- Botón de acción, enlace al formulario de edición. --}}
+                                                <a href="{{ route('docentes.edit', $d) }}" class="btn btn-ghost">Actualizar</a>
 
+                                                {{-- Formulario de eliminación, utiliza el método delete y requiere confirmación de js. --}}
                                                 <form action="{{ route('docentes.destroy', $d) }}"
                                                       method="POST"
                                                       onsubmit="return confirm('¿Eliminar este docente y su usuario asociado?')">
@@ -76,7 +77,7 @@
                             </tbody>
                         </table>
                     </div>
-
+                    {{-- Bloque de paginación, muestra los enlaces de paginación de laravel. --}}
                     <div class="pager">
                         {{ $docentes->links() }}
                     </div>

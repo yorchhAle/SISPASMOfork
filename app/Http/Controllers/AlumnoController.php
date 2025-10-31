@@ -12,20 +12,35 @@ use Illuminate\Validation\Rule;
 
 class AlumnoController extends Controller
 {
+    /*
+     * Muestra una lista paginada de todos los Alumnos. Carga las relaciones de 'usuario' y 'diplomado' 
+     * para cada alumno y ordena la lista de forma descendente por ID.
+     *
+    */
     public function index()
     {
         $alumnos = Alumno::with(['usuario', 'diplomado'])->orderByDesc('id_alumno')->paginate(15);
         return view('administrador.CRUDAlumnos.read', compact('alumnos'));
     }
 
+
+    /*
+     * Muestra la vista del formulario para crear un nuevo Alumno. Obtiene todos los diplomados disponibles 
+     * para la selección en el formulario.
+    */
     public function create()
     {
         $diplomados = Diplomado::all();
         return view('administrador.CRUDalumnos.create', compact('diplomados'));
     }
 
+
+    /*
+     * Almacena un nuevo Alumno y su Usuario asociado en la base de datos.
+    */
     public function store(Request $request)
     {
+        /* Valida todos los datos, incluyendo la unicidad de matrícula, usuario y correo. */
         $data = $request->validate([
             'nombre'       => ['required','string','max:100'],
             'apellidoP'    => ['required','string','max:100'],
@@ -44,6 +59,7 @@ class AlumnoController extends Controller
             'estatus'      => ['required', Rule::in(['activo','baja','egresado'])],
         ]);
 
+        /* Ejecuta una transacción para garantizar la creación simultánea del registro en 'usuarios' y 'alumnos'.*/
         DB::transaction(function () use ($data) {
             $usuario = User::create([
                 'nombre'      => $data['nombre'],
@@ -70,6 +86,11 @@ class AlumnoController extends Controller
         return redirect()->route('alumnos.index')->with('ok', 'Alumno creado correctamente.');
     }
 
+
+    /*
+     * Muestra la vista del formulario para editar un Alumno existente. Carga las relaciones 'usuario' y 'diplomado' 
+     * del Alumno y pasa todos los diplomados al formulario para permitir la edición.
+    */
     public function edit(Alumno $alumno)
     {
         $alumno->load('usuario', 'diplomado');
@@ -77,15 +98,20 @@ class AlumnoController extends Controller
         return view('administrador.CRUDalumnos.update', compact('alumno', 'diplomados'));
     }
 
+
+    /*
+     * Actualiza la información de un Alumno y su Usuario asociado.
+    */
     public function update(Request $request, Alumno $alumno)
     {
         $alumno->load('usuario');
         $u = $alumno->usuario;
 
+        /* Valida los campos, asegurando la unicidad de datos sensibles (matrícula, usuario, correo) ignorando el registro actual. */
         $data = $request->validate([
-            'nombre'       => ['required','string','max:100'],
-            'apellidoP'    => ['required','string','max:100'],
-            'apellidoM'    => ['required','string','max:100'],
+            'nombre'  => ['required','string','max:100'],
+            'apellidoP' => ['required','string','max:100'],
+            'apellidoM' => ['required','string','max:100'],
             'fecha_nac'    => ['required','date'],
             'usuario'      => [
                 'required','string','max:50',
@@ -109,6 +135,7 @@ class AlumnoController extends Controller
             'estatus'      => ['required', Rule::in(['activo','baja','egresado'])],
         ]);
 
+        /* Ejecuta una transacción para actualizar los datos en 'usuarios' y 'alumnos'. */
         DB::transaction(function () use ($data, $u, $alumno) {
             $u->fill([
                 'nombre'    => $data['nombre'],
@@ -123,6 +150,7 @@ class AlumnoController extends Controller
                 'id_rol'    => $data['id_rol'],
             ]);
 
+            /* Actualiza la contraseña solo si se proporciona un nuevo valor. */
             if (!empty($data['pass'])) {
                 $u->pass = Hash::make($data['pass']);
             }
@@ -138,6 +166,11 @@ class AlumnoController extends Controller
         return redirect()->route('alumnos.index')->with('ok', 'Alumno actualizado.');
     }
 
+
+    /*
+     * Elimina un registro de Alumno y su Usuario asociado. Ejecuta una transacción para garantizar que 
+     * ambos registros (Alumno y Usuario) sean eliminados de forma conjunta.
+    */
     public function destroy(Alumno $alumno)
     {
         DB::transaction(function () use ($alumno) {
@@ -147,7 +180,6 @@ class AlumnoController extends Controller
                 $usuario->delete();
             }
         });
-
         return redirect()->route('alumnos.index')->with('ok', 'Alumno eliminado.');
     }
 }

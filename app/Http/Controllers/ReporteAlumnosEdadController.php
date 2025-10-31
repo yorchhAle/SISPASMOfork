@@ -18,17 +18,24 @@ class ReporteAlumnosEdadController extends Controller
 
     public function index()
     {
-        return view('administrador.reportes.alumnosEdad.index');
+        $diplomados = \DB::table('diplomados')->orderBy('nombre')->get(['id_diplomado', 'nombre']);
+        return view('administrador.reportes.alumnosEdad.index', compact('diplomados'));
     }
 
-    public function chartData()
+    public function chartData(Request $request)
     {
     $dob = $this->dobColumn;
+    $diplomadoId = $request->get('diplomado_id'); 
 
-    $row = \DB::table('alumnos as a')
+    $query = \DB::table('alumnos as a')
         ->join('usuarios as u', 'u.id_usuario', '=', 'a.id_usuario')
-        ->whereNotNull($dob)
-        ->selectRaw("
+        ->whereNotNull($dob);
+    
+    if ($diplomadoId) {
+        $query->where('a.id_diplomado', $diplomadoId);
+    }
+
+    $row = $query->selectRaw("
             SUM(CASE WHEN TIMESTAMPDIFF(YEAR, {$dob}, CURDATE()) BETWEEN 17 AND 21 THEN 1 ELSE 0 END) AS r_17_21,
             SUM(CASE WHEN TIMESTAMPDIFF(YEAR, {$dob}, CURDATE()) BETWEEN 22 AND 26 THEN 1 ELSE 0 END) AS r_22_26,
             SUM(CASE WHEN TIMESTAMPDIFF(YEAR, {$dob}, CURDATE()) BETWEEN 27 AND 31 THEN 1 ELSE 0 END) AS r_27_31,
@@ -102,7 +109,7 @@ class ReporteAlumnosEdadController extends Controller
         $titulo         = $request->input('titulo', 'Reporte de Alumnos por Edad');
 
         if (!$chart_data_url) {
-            $chartDataResponse = $this->chartData();
+            $chartDataResponse = $this->chartData($request); 
             $chartData = json_decode($chartDataResponse->getContent(), true);
 
             $config = [
@@ -126,26 +133,35 @@ class ReporteAlumnosEdadController extends Controller
                 ]
             ];
             $chartUrl = 'https://quickchart.io/chart?width=500&height=300&c=' . urlencode(json_encode($config));
-            $chart_image    = \Illuminate\Support\Facades\Http::get($chartUrl)->body();
+            $chart_image = \Illuminate\Support\Facades\Http::get($chartUrl)->body();
             $chart_data_url = 'data:image/png;base64,' . base64_encode($chart_image);
         }
+        
+        $subtitulo = $request->input('subtitulo', ''); 
 
         $fecha = \Carbon\Carbon::now()->isoFormat('D MMMM YYYY');
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView(
             'administrador.reportes.alumnosEdad.pdf_grafica',
-            compact('alumnos', 'chart_data_url', 'titulo', 'fecha')
+            compact('alumnos', 'chart_data_url', 'titulo', 'fecha', 'subtitulo')
         );
 
         return $pdf->download('alumnosEdad.pdf');
     }
 
-    public function chartDataExact()
+    public function chartDataExact(Request $request) 
     {
-        $rows = DB::table('alumnos as a')
+        $diplomadoId = $request->get('diplomado_id');
+
+        $query = DB::table('alumnos as a')
             ->join('usuarios as u', 'u.id_usuario', '=', 'a.id_usuario')
-            ->select(DB::raw('TIMESTAMPDIFF(YEAR, u.fecha_nac, CURDATE()) as edad'), DB::raw('COUNT(*) as total'))
-            ->whereNotNull('u.fecha_nac')
+            ->whereNotNull('u.fecha_nac');
+        
+        if ($diplomadoId) {
+            $query->where('a.id_diplomado', $diplomadoId);
+        }
+
+        $rows = $query->select(DB::raw('TIMESTAMPDIFF(YEAR, u.fecha_nac, CURDATE()) as edad'), DB::raw('COUNT(*) as total'))
             ->groupBy('edad')
             ->orderBy('edad', 'asc')
             ->get();

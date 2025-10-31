@@ -11,6 +11,10 @@ use Illuminate\Validation\Rule;
 
 class CoordinadorController extends Controller
 {
+    /*
+     * Constructor del controlador. Aplica un middleware que verifica que el usuario autenticado
+        tenga el rol de 'Administrador' para permitir la gestión de coordinadores.
+    */
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -21,25 +25,44 @@ class CoordinadorController extends Controller
         });
     }
 
+
+    /*
+     * Muestra una lista paginada de todos los Coordinadores. Incluye la información del usuario asociado y 
+        los ordena de forma descendente por ID.
+    */
     public function index()
     {
         $coordinadores = Coordinador::with('usuario')->orderByDesc('id_coordinador')->paginate(15);
         return view('administrador.CRUDCoordinadores.read', compact('coordinadores'));
     }
 
+
+    /*
+     * Muestra la vista del formulario para crear un nuevo Coordinador.
+    */
     public function create()
     {
         return view('administrador.CRUDCoordinadores.create');
     }
 
+
+    /*
+     * Muestra la vista del formulario para editar un Coordinador existente. Carga la relación 'usuario' del 
+        modelo Coordinador para mostrar todos los datos.
+    */
     public function edit(Coordinador $coordinador)
     {
         $coordinador->load('usuario');
         return view('administrador.CRUDCoordinadores.update', compact('coordinador'));
     }
 
+
+    /*
+     * Actualiza la información de un Coordinador y su Usuario asociado.
+    */
     public function update(Request $request, Coordinador $coordinador)
     {
+        /* Valida los campos, asegurando la unicidad del usuario y correo, ignorando el registro actual. */
         $data = $request->validate([
             'nombre'       => ['required', 'string', 'max:100'],
             'apellidoP'    => ['required', 'string', 'max:100'],
@@ -53,6 +76,8 @@ class CoordinadorController extends Controller
             'fecha_ingreso' => ['required', 'date'],
             'estatus'       => ['required', Rule::in(['activo', 'inactivo'])],
         ]);
+
+        /* Ejecuta una transacción para actualizar los datos tanto en la tabla 'usuarios' como en 'coordinadores'. */
         DB::transaction(function () use ($data, $coordinador) {
             $coordinador->usuario->update([
                 'nombre'      => $data['nombre'],
@@ -73,8 +98,13 @@ class CoordinadorController extends Controller
         return redirect()->route('coordinadores.index')->with('success', 'Coordinador actualizado exitosamente.');
     }
 
+
+    /*
+     * Almacena un nuevo Coordinador y su Usuario asociado en la base de datos.
+    */
     public function store(Request $request)
     {
+        /* Valida todos los campos, incluyendo la unicidad del usuario y correo. */
         $data = $request->validate([
             'nombre'       => ['required', 'string', 'max:100'],
             'apellidoP'    => ['required', 'string', 'max:100'],
@@ -89,6 +119,8 @@ class CoordinadorController extends Controller
             'fecha_ingreso' => ['required', 'date'],
             'estatus'       => ['required', Rule::in(['activo', 'inactivo'])],
         ]);
+
+        /* Ejecuta una transacción para garantizar la creación simultánea del registro en 'usuarios' y 'coordinadores'. */
         DB::transaction(function () use ($data) {
             $usuario = User::create([
                 'nombre'      => $data['nombre'],
@@ -101,19 +133,25 @@ class CoordinadorController extends Controller
                 'correo'      => $data['correo'],
                 'telefono'    => $data['telefono'],
                 'direccion'   => $data['direccion'],
+                /* Asigna el rol de Coordinador (id_rol = 2) al nuevo usuario. */
                 'id_rol'      => 2, 
             ]);
             Coordinador::create([
-                'id_usuario'    => $usuario->id_usuario,
+                'id_usuario' => $usuario->id_usuario,
                 'fecha_ingreso' => $data['fecha_ingreso'],
-                'estatus'       => $data['estatus'],
+                'estatus' => $data['estatus'],
             ]);
         });
         return redirect()->route('coordinadores.index')->with('success', 'Coordinador creado exitosamente.');
     }
 
+    /*
+     * Elimina un registro de Coordinador y su Usuario asociado.
+    */
     public function destroy(Coordinador $coordinador)
     {
+        /* Ejecuta una transacción para asegurar que ambos registros (Coordinador y Usuario) sean eliminados
+            de forma conjunta. */
         DB::transaction(function () use ($coordinador) {
             $usuario = $coordinador->usuario; 
             $coordinador->delete();          
@@ -121,7 +159,6 @@ class CoordinadorController extends Controller
                 $usuario->delete();
             }
         });
-
         return redirect()->route('coordinadores.index')->with('ok', 'Coordinador eliminado.');
     }
 }

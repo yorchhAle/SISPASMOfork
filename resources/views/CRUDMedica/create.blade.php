@@ -1,6 +1,5 @@
 @extends('layouts.encabezadosAl')
-
-@section('title', 'Ficha Médica')
+@section('title', 'Ficha médica')
 
 @section('content')
     <div class="crud-wrap">
@@ -9,6 +8,7 @@
                 <h2 class="crud-hero-title">Mi ficha médica</h2>
                 <p class="crud-hero-subtitle">Registro</p>
 
+                {{-- Navegación de pestañas, el link "registrar" está marcado como activo. --}}
                 <nav class="crud-tabs">
                     <a href="{{ route('mi_ficha.create') }}" class="tab active">Registrar</a>
                     <a href="{{ route('mi_ficha.show') }}" class="tab">Ver mi ficha</a>
@@ -18,6 +18,7 @@
             <div class="crud-body">
                 <h1>Nueva ficha médica</h1>
 
+                {{-- Bloque de errores y mensajes de sesión. --}}
                 @if ($errors->any())
                     <ul class="gm-errors">
                         @foreach ($errors->all() as $e)
@@ -30,10 +31,12 @@
                     <div class="gm-ok">{{ session('ok') }}</div>
                 @endif
 
+                {{-- Formulario principal, envía los datos para crear la ficha médica (método post). --}}
                 <form class="gm-form" method="POST" action="{{ route('mi_ficha.store') }}">
                     @csrf
 
-                    <h3>Alergias</h3>
+                    <h3>Alergias (Marque las alergias que padece y detalle en los campos correspondientes)</h3> 
+                    {{-- Bloque de alergias: campos booleanos y de detalle agrupados bajo `alergias[]`. --}}
                     <div>
                         <input type="hidden" name="alergias[polvo]" value="0">
                         <label class="chk">
@@ -84,6 +87,7 @@
                     </div>
 
                     <h3>Enfermedades</h3>
+                    {{-- Bloque de enfermedades: incluye preguntas booleanas sobre condiciones crónicas y medicación. --}}
                     <div>
                         <input type="hidden" name="enfermedades[enfermedad_cronica]" value="0">
                         <label class="chk">
@@ -111,6 +115,7 @@
                     </div>
 
                     <h3>Contacto de emergencia</h3>
+                    {{-- Bloque de contacto de emergencia: todos los campos de este bloque son requeridos por el script js (aunque no tienen required="true" en html). --}}
                     <div>
                         <input name="contacto[nombre]" value="{{ old('contacto.nombre') }}" placeholder="Nombre" maxlength="50">
                         <input name="contacto[apellidos]" value="{{ old('contacto.apellidos') }}" placeholder="Apellidos" maxlength="50">
@@ -127,12 +132,16 @@
                         </select>
                     </div>
 
+                    {{-- Bloque de acciones, botón de Guardar y Cancelar. --}}
                     <div class="actions">
-                        <a href="{{ route('mi_ficha.show') }}" class="btn-ghost">Cancelar</a>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <a href="{{ route('mi_ficha.show') }}" class="btn btn-danger">Cancelar</a>
+                        <button type="submit" class="btn btn-ghosts">Guardar</button>
                     </div>
                 </form>
             </div>
         </section>
     </div>
+@endsection
+@section('scripts')
+    @vite(['resources/js/fichaValidacion.js'])
 @endsection

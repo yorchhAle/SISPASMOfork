@@ -1,6 +1,5 @@
 @extends('layouts.encabezadosAs')
-
-@section('title', 'Mi Información Personal')
+@section('title', 'Mi información personal')
 
 @section('content')
     <div class="crud-wrap">
@@ -11,9 +10,11 @@
             </header>
 
             <div class="crud-body">
+                {{-- Bloque de datos, contenedor principal para mostrar la información del usuario/aspirante. --}}
                 <div class="info-ficha">
                     <div class="info-item">
                         <span class="info-label">Nombre(s):</span>
+                        {{-- Acceso directo a las propiedades del usuario autenticado (`auth()->user()`). --}}
                         <span class="info-value">{{ auth()->user()->nombre ?? '—' }}</span>
                     </div>
                     <div class="info-item">
@@ -30,12 +31,12 @@
                     </div>
                     <div class="info-item">
                         <span class="info-label">Interés:</span>
-                        {{-- ACCEDE AL INTERÉS A TRAVÉS DEL MODELO ASPIRANTE --}}
+                        {{-- Accede al interés a través del modelo aspirante --}}
                         <span class="info-value">{{ auth()->user()->aspirante->interes ?? '—' }}</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">Estatus:</span>
-                        {{-- ACCEDE AL ESTATUS A TRAVÉS DEL MODELO ASPIRANTE --}}
+                        {{-- Accede al estatus a través del modelo aspirante --}}
                         <span class="info-value">{{ auth()->user()->aspirante->estatus ?? '—' }}</span>
                     </div>
                 </div>

@@ -33,6 +33,10 @@ use App\Http\Controllers\Auth\AlumnoPasswordResetLinkController;
 use App\Http\Controllers\Auth\AlumnoNewPasswordController;
 use App\Http\Controllers\Auth\DocentePasswordResetLinkController;
 use App\Http\Controllers\Auth\DocenteNewPasswordController;
+use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\Admin\BackupController;
+use App\Http\Controllers\NotificacionController; 
+
 
 /*--------------------------------------------------------------------------
 | Rutas Públicas
@@ -181,6 +185,10 @@ Route::middleware(['auth','role:docente'])->group(function () {
     Route::delete('/docente/calificaciones/{calif}', [CalificacionController::class, 'destroy'])->name('calif.destroy');
 });
 
+Route::get('/calificaciones/alumnos-por-modulo/{modulo}', [App\Http\Controllers\CalificacionController::class, 'getAlumnosPorModulo'])
+    ->name('calif.alumnosPorModulo')
+    ->middleware('auth'); // O el middleware que uses para docentes
+
 // Rutas para Administrador, Coordinador y Superadmin
 Route::middleware(['auth','role:administrador,coordinador,superadmin'])->group(function () {
     Route::get('/admin/calificaciones', [CalificacionController::class, 'indexAdmin'])->name('calif.admin.index');
@@ -229,21 +237,14 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    // Alumno
-    Route::get('/alumno/horario', [HorarioController::class, 'horarioAlumno'])
-        ->name('alumno.horario'); // puedes agregar 'role:alumno' si ya lo tienes
+    Route::get('/alumno/horario', [HorarioController::class, 'horarioAlumno'])->name('alumno.horario');
 
-    // Docente
-    Route::get('/docente/horario', [HorarioController::class, 'horarioDocente'])
-        ->name('docente.horario'); // idem: 'role:docente'
+    Route::get('/docente/horario', [HorarioController::class, 'horarioDocente'])->name('docente.horario'); 
 });
 
 /* RUTAS REPORTES*/
 // Reporte por edades
-Route::middleware(['auth'])
-    ->prefix('admin/reportes/alumnos-edad')
-    ->name('admin.reportes.alumnosEdad.')
-    ->group(function () {
+Route::middleware(['auth'])->prefix('admin/reportes/alumnos-edad')->name('admin.reportes.alumnosEdad.')->group(function () {
         Route::get('/', [ReporteAlumnosEdadController::class, 'index'])->name('index');
         Route::get('/chart-data', [ReporteAlumnosEdadController::class, 'chartData'])->name('chartData');
         Route::get('/table', [ReporteAlumnosEdadController::class, 'table'])->name('table');
@@ -284,6 +285,7 @@ Route::post('/reportes/reprobados/exportar', [ReporteAlumnosReprobadosController
 Route::get('/reportes/aspirantes', [ReporteAspirantesController::class, 'mostrarReporte'])->name('reportes.aspirantes.index');
 Route::get('/reportes/aspirantes/total', [ReporteAspirantesController::class, 'totalPorDiplomado'])->name('reportes.aspirantes.total');
 Route::get('/reportes/aspirantes/comparacion', [ReporteAspirantesController::class, 'comparacionTipos'])->name('reportes.aspirantes.comparacion');
+Route::get('/reportes/aspirantes/exportar', [ReporteAspirantesController::class, 'exportarExcel'])->name('reportes.aspirantes.exportar');
 
 // Recuperación de contraseña alumno
 Route::prefix('alumno')->group(function () {
@@ -301,3 +303,32 @@ Route::prefix('docente')->group(function () {
     Route::post('reset-password', [DocenteNewPasswordController::class, 'store'])->name('password.update');
 });
 
+
+Route::middleware(['auth'/*, 'can:admin' */])->group(function () {
+    Route::post('/aspirantes/{aspirante}/convertir', [AspiranteController::class, 'convertirAAlumno'])
+        ->name('aspirantes.convertir');
+});
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/extracurriculares', [InscripcionController::class, 'index'])->name('extracurriculares.disponibles');
+    Route::post('/extracurriculares/{extracurricular}/inscribir', [InscripcionController::class, 'store'])->name('extracurriculares.inscribir');
+    Route::delete('/extracurriculares/{extracurricular}/cancelar', [InscripcionController::class, 'destroy'])->name('extracurriculares.cancelar');
+
+});
+
+
+/*Respaldo y restauración */
+Route::prefix('admin')->name('admin.')->group(function() {
+    Route::get('backup/manual', [BackupController::class, 'backup'])->name('backup.manual');
+    Route::post('backup/create', [BackupController::class, 'createBackup'])->name('backup.create');
+    Route::post('backup/restore', [BackupController::class, 'restoreBackup'])->name('backup.restore');
+});
+
+/*Notificaciones*/
+Route::middleware('auth') ->prefix('notificaciones')->name('notificaciones.')->group(function () {
+    Route::get('/', [NotificacionController::class, 'index'])->name('index');
+    Route::post('/mark-all', [NotificacionController::class, 'markAll'])->name('markAll');
+    Route::post('/{id}/mark-one', [NotificacionController::class, 'markOne'])->name('markOne');
+    Route::delete('/{id}', [NotificacionController::class, 'destroy'])->name('destroy');
+});

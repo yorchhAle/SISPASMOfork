@@ -1,14 +1,16 @@
 :root{
-  --color-principal: #112543;
-  --color-rojo: #E51E23;
-  --color-gris: #f5f5f5;
-  --color-texto: #000000;
-  --color-blanco: #ffffff;
-  --font-family: 'Montserrat', sans-serif;
-  --spacing-unit: 1rem;
-  --radius-xl: 32px;
-  --radius-2xl: 48px; 
-  --shadow: 0 10px 25px rgba(0,0,0,.18);
+  --color-principal:#112543; 
+  --color-rojo:#E51E23;
+  --color-gris:#f8f8f8;
+  --color-texto:#000; 
+  --color-blanco:#fff; 
+  --color-azulsecundario: #305aa3;
+  --color-azulterciario: #20344e;
+  --font-family:'Montserrat',sans-serif;
+  --spacing-unit:1rem; 
+  --radius-xl:32px; 
+  --radius-2xl:48px;
+  --shadow:0 10px 25px rgba(0,0,0,.18);
 }
 
 *{ 
@@ -117,8 +119,7 @@ body {
 
 .btn-primary {
   color: var(--color-blanco);
-  background: var(--color-rojo);
-  box-shadow: 0 6px 14px rgba(229,30,35,.35);
+  background: var(--color-azulsecundario);
   transition: transform .06s ease, filter .15s ease;
 }
 
@@ -149,6 +150,107 @@ body {
   border-radius: 12px;
   padding: 10px 12px;
   font-weight: 600;
+}
+
+/*Notificaciones*/
+.notifications-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.info-message {
+  padding: 15px;
+  background-color: #f0f8ff; 
+  border: 1px solid #cce5ff;
+  border-radius: 5px;
+  color: #004085;
+  text-align: center;
+}
+
+.notification-list {
+  list-style: none;
+  padding: 0;
+}
+
+.notification-item {
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-left: 5px solid;
+}
+
+.notification-item.unread {
+  background-color: #e0f7fa; 
+  border-left-color: #00bcd4; 
+  font-weight: 500;
+}
+
+.notification-item.read {
+  background-color: #f8f9fa; 
+  border-left-color: #adb5bd;
+  color: #495057;
+}
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 5px;
+}
+
+.notification-title {
+  margin: 0;
+  font-size: 1.1em;
+}
+
+.notification-time {
+  font-size: 0.8em;
+  color: #6c757d;
+}
+
+.new-badge {
+  background-color: #dc3545; /* Rojo */
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.7em;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.notification-details {
+  margin: 8px 0;
+  line-height: 1.6;
+  padding-left: 15px;
+  border-left: 2px solid #ced4da;
+}
+
+.notification-footer {
+  display: block;
+  text-align: right;
+  font-size: 0.75em;
+  color: #888;
+}
+
+.btn-danger{
+  color:#fff;
+  background:var(--color-rojo);
+  border:none;
+  padding:10px 16px;
+  border-radius:999px;
+  font-weight: bold;
+  cursor:pointer;
+  transition:transform .06s ease,filter .15s ease
+}
+
+.btn-danger:hover{
+  filter:brightness(1.05);
+  transform:translateY(-1px)
+}
+
+.btn-danger:active{
+  transform:translateY(0)
 }
 
 /* Responsivo */
