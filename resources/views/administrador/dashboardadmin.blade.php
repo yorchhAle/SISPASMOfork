@@ -2,8 +2,9 @@
 @section('title', 'Dashboard de Administrador')
 
 @section('content')
-  <h1>Bienvenido al Panel de Administrador</h1>
+  <h1>Bienvenido al panel de administrador</h1>
 
+  {{-- Bloque de estadísticas principales: muestra los conteos totales de usuarios. --}}
   <section class="stats-grid">
     <article class="stat-card">
       <h3>Alumnos</h3>
@@ -21,11 +22,14 @@
     </article>
   </section>
 
+  {{-- Bloque de gráfica de estatus de alumnos (activos/baja). --}}
   <section class="panel">
     <div class="panel-header">
       <h2>Alumnos activos/baja</h2>
     </div>
     <div class="panel-body">
+      {{-- Canvas de la gráfica, `data-activos` y `data-baja` inicializan la gráfica. --}}
+      {{-- `data-metrics-url` proporciona la url para las actualizaciones asíncronas de javascript. --}}
       <canvas id="alumnosChart"
         data-activos="{{ $alumnosActivos ?? 0 }}"
         data-baja="{{ $alumnosBaja ?? 0 }}"
@@ -35,6 +39,7 @@
   </section>
 
   <section class="two-col">
+    {{-- Bloque de calendario semanal: muestra los días de la semana con marcadores para actividades. --}}
     <div class="panel">
       <div class="panel-header">
         <h2>Calendario semanal</h2>
@@ -53,11 +58,10 @@
             </tr>
           </thead>
           <tbody>
-            {{-- Obtener el primer día de la semana actual --}}
             @php
               $startOfWeek = \Carbon\Carbon::now()->startOfWeek();
             @endphp
-            @for($r=0; $r < 5; $r++)
+            @for($r=0; $r < 1; $r++)
               <tr>
                 @for($c=0; $c < 7; $c++)
                   @php
@@ -66,10 +70,8 @@
                     $tipoActividad = $mapaActividades[$dateKey] ?? null;
                     $class = $tipoActividad ? 'has-' . $tipoActividad : '';
                   @endphp
-                  {{-- Agregar la clase dinámica a la celda --}}
                   <td class="{{ $class }}">
                     @if ($tipoActividad)
-                        {{-- Mostrar la fecha si hay una actividad --}}
                         {{ $currentDate->day }}
                     @else
                         &nbsp;
@@ -83,6 +85,7 @@
       </div>
     </div>
 
+    {{-- Bloque de actividades semanales: lista las actividades programadas con detalle. --}}
     <div class="panel">
       <div class="panel-header">
         <h2>Actividades semanales</h2>
@@ -104,10 +107,27 @@
     </div>
 </section>
 
-  <section class="panel">
+{{-- Bloque de historial de notificaciones. --}}
+<section class="panel">
     <div class="panel-header">
-      <h2>Notificaciones 🔔</h2>
+        <h2>Historial de notificaciones</h2>
     </div>
-    <div class="panel-body text-muted">—</div>
-  </section>
+
+    @if($notificaciones->count() > 0)
+        <div id="notificaciones-container">
+        </div>
+
+        <div id="notificaciones-pagination" class="mt-4">
+            <button id="prevBtn" disabled>Anterior</button>
+            <button id="nextBtn">Siguiente</button>
+        </div>
+    @else
+        <p class="text-gray-500 text-center py-4">No hay notificaciones registradas.</p>
+    @endif
+</section>
+
+{{-- Script tag oculto que proporciona los datos completos de notificaciones a javascript para la paginación local. --}}
+<script type="application/json" id="notificacionesData">
+    {!! $notificaciones->toJson() !!}
+</script>
 @endsection

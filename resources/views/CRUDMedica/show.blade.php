@@ -1,6 +1,9 @@
 @extends('layouts.encabezados')
+@section('title', 'Gestión fichas médicas')
 
-@section('title', 'Gestión Fichas Médicas')
+@push('styles')
+    @vite('resources/css/ficha-medica.css')
+@endpush
 
 @section('content')
     <div class="crud-wrap">
@@ -22,7 +25,7 @@
 
           <h1>Ficha #{{ $ficha->id_ficha }}</h1>
 
-          {{-- Alumno --}}
+          {{-- Bloque de datos del alumno asociado a la ficha. --}}
           <h3>Alumno</h3>
           <div class="gm-kv">
             <div><span>Nombre:</span> {{ $ficha->alumno?->nombre }} {{ $ficha->alumno?->apellidoP }} {{ $ficha->alumno?->apellidoM }}</div>
@@ -36,7 +39,7 @@
 
           <hr class="gm-sep">
 
-          {{-- Alergias --}}
+          {{-- Bloque de alergias, muestra todas las condiciones booleanas y sus detalles. --}}
           <h3>Alergias</h3>
           <div class="gm-grid-2">
             <div><span>Polvo:</span> {{ $ficha->alergias?->polvo ? 'Sí' : 'No' }}</div>
@@ -60,7 +63,7 @@
 
           <hr class="gm-sep">
 
-          {{-- Enfermedades --}}
+          {{-- Bloque de enfermedades, muestra condiciones crónicas y medicación. --}}
           <h3>Enfermedades</h3>
           <div class="gm-grid-2">
             <div><span>Enfermedad crónica:</span> {{ $ficha->enfermedades?->enfermedad_cronica ? 'Sí' : 'No' }}</div>
@@ -78,7 +81,7 @@
 
           <hr class="gm-sep">
 
-          {{-- Contacto de emergencia --}}
+          {{-- Bloque de contacto de emergencia: muestra los datos de la persona a contactar. --}}
           <h3>Contacto de emergencia</h3>
           <div class="gm-grid-2">
             <div><span>Nombre:</span> {{ $ficha->contacto?->nombre ?? '—' }} {{ $ficha->contacto?->apellidos ?? '' }}</div>
@@ -91,8 +94,10 @@
           </div>
 
           <div class="actions">
-            <a href="{{ route('fichasmedicas.index') }}" class="btn-ghost">Volver</a>
+            {{-- Botón de acción: enlace para volver al listado. --}}
+            <a href="{{ route('fichasmedicas.index') }}" class="btn btn-ghost">Volver</a>
 
+            {{-- Formulario de eliminación de la ficha médica completa. --}}
             <form method="POST" action="{{ route('fichasmedicas.destroy', $ficha) }}" style="display:inline">
               @csrf @method('DELETE')
               <button class="btn btn-danger"

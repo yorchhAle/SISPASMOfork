@@ -1,6 +1,5 @@
 @extends('layouts.encabezadosDoc')
-
-@section('title', 'Mi Información Personal')
+@section('title', 'Mi información personal')
 
 @section('content')
     <div class="crud-wrap">
@@ -11,9 +10,11 @@
             </header>
 
             <div class="crud-body">
+                {{-- Bloque de datos: contenedor principal para mostrar la información del usuario/docente. --}}
                 <div class="info-ficha">
                     <div class="info-item">
                         <span class="info-label">Nombre(s):</span>
+                        {{-- Acceso directo a las propiedades del usuario autenticado (`auth()->user()`). --}}
                         <span class="info-value">{{ auth()->user()->nombre ?? '—' }}</span>
                     </div>
                     <div class="info-item">
@@ -26,6 +27,7 @@
                     </div>
                     <div class="info-item">
                         <span class="info-label">Edad:</span>
+                        {{-- Cálculo de la edad utilizando carbon a partir de la fecha de nacimiento. --}}
                         <span class="info-value">{{ \Carbon\Carbon::parse(auth()->user()->fecha_nac)->age ?? '—' }}</span>
                     </div>
                     <div class="info-item">

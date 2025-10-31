@@ -1,6 +1,5 @@
 @extends('layouts.encabezados')
-
-@section('title', 'Gestión Alumnos')
+@section('title', 'Gestión alumnos')
 
 @section('content')
     <div class="crud-wrap">
@@ -22,6 +21,7 @@
                     <div class="gm-ok">{{ session('ok') }}</div>
                 @endif
 
+                {{-- Estructura condicional para mostrar la tabla si hay datos o un mensaje de vacío. --}}
                 @if($alumnos->count() === 0)
                     <div class="gm-empty">No hay alumnos registrados.</div>
                 @else
@@ -32,35 +32,33 @@
                                     <th>Matrícula</th>
                                     <th>Nombre</th>
                                     <th>Correo</th>
-                                    <th>Diplomado</th> {{-- Este encabezado de columna no necesita cambio --}}
-                                    <th>Grupo</th> {{-- Este encabezado de columna no necesita cambio --}}
+                                    <th>Diplomado</th> 
+                                    <th>Grupo</th> 
                                     <th>Estatus</th>
                                     <th class="th-actions">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                 {{-- Itera sobre la colección paginada de alumnos ($alumnos). --}}
                                 @foreach($alumnos as $a)
                                     <tr>
                                         <td>{{ $a->matriculaA }}</td>
+                                        {{-- Importante, acceso a la información del Usuario y Diplomado (relaciones Eloquent). --}}
                                         <td>
                                             {{ optional($a->usuario)->nombre }}
                                             {{ optional($a->usuario)->apellidoP }}
                                             {{ optional($a->usuario)->apellidoM }}
                                         </td>
                                         <td>{{ optional($a->usuario)->correo }}</td>
-                                        {{-- ---------------------------------------------------------------- --}}
-                                        {{-- CAMBIO AQUÍ: Usamos la relación `diplomado` para acceder a los datos --}}
-                                        {{-- ---------------------------------------------------------------- --}}
                                         <td>{{ optional($a->diplomado)->nombre }}</td>
                                         <td>{{ optional($a->diplomado)->grupo }}</td>
-                                        {{-- ---------------------------------------------------------------- --}}
-                                        {{-- FIN DEL CAMBIO --}}
-                                        {{-- ---------------------------------------------------------------- --}}
                                         <td>{{ $a->estatus }}</td>
                                         <td>
                                             <div class="table-actions">
-                                                <a href="{{ route('alumnos.edit', $a) }}" class="btn-ghost">Editar</a>
+                                                {{-- Muestra formulario de Actualización (link al formulario de edición). --}}
+                                                <a href="{{ route('alumnos.edit', $a) }}" class="btn btn-ghost">Actualizar</a>
 
+                                                {{-- Importante, formulario para la Eliminación (método DELETE). Incluye confirmación de JS. --}}
                                                 <form action="{{ route('alumnos.destroy', $a) }}" method="POST" onsubmit="return confirm('¿Eliminar alumno y su usuario?')">
                                                     @csrf @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -72,11 +70,8 @@
                             </tbody>
                         </table>
                     </div>
-
-                    <div class="crud-toolbar">
-                        <a href="{{ route('alumnos.create') }}" class="btn btn-primary">Nuevo alumno</a>
-                    </div>
-
+                    
+                    {{-- Muestra los enlaces de paginación de Laravel. --}}
                     <div class="pager">
                         {{ $alumnos->links() }}
                     </div>

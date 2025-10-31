@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Hash;
 
 class AlumnoNewPasswordController extends Controller
 {
+    /*
+     * Muestra la vista para que el Alumno pueda establecer una nueva contraseña. Recibe el token de restablecimiento 
+     * de contraseña y el correo electrónico del usuario a través de los parámetros de la URL para rellenar el 
+     * formulario.
+    */
     public function create(Request $request, $token)
     {
         $correo = $request->query('email');
@@ -18,6 +23,10 @@ class AlumnoNewPasswordController extends Controller
         ]);
     }
 
+
+    /*
+     * Procesa la solicitud para restablecer la contraseña del Alumno.
+    */
     public function store(Request $request)
     {
         $request->validate([
@@ -26,6 +35,7 @@ class AlumnoNewPasswordController extends Controller
             'password'              => 'required|confirmed|min:8',
         ]);
 
+        /* Valida el token, el correo electrónico y la nueva contraseña (incluyendo confirmación). */
         $status = Password::broker('users')->reset(
             [
                 'correo'                 => $request->correo,
@@ -35,6 +45,7 @@ class AlumnoNewPasswordController extends Controller
             ],
             function ($user) use ($request) {
                 $user->forceFill([
+                    /* Actualiza la contraseña en el campo 'pass' en lugar del campo 'password'. */
                     'pass' => Hash::make($request->password),
                 ])->save();
             }
